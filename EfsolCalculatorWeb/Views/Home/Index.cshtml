@@ -1,0 +1,107 @@
+﻿@model CalculatorData
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<form method="post" style="margin-bottom:20px">
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <input asp-for="FirstValue" placeholder="" />
+        <select asp-for="Action">
+            <option>+</option>
+            <option>-</option>
+            <option>x</option>
+            <option>÷</option>
+        </select>
+        <input asp-for="SecondValue" />
+        <button>result</button>
+    </div>
+</form>
+
+
+@if (Model != null)
+{
+    double beginMargin = 47;
+    switch (Model.Action)
+    {
+
+        case '+':
+            <p style="margin-left: 44%;" class="margin">+ @Model.FirstValue</p>
+            <p style="margin-left: 45%;" class="margin">@Model.SecondValue</p>
+            <hr class="margin" />
+            <p style="margin-left: 45%;" class="margin">@Model.Result</p>
+            <p>Ответ: @Model.Result</p>
+            break;
+
+        case '-':
+            <p style="margin-left: 44%;" class="margin">- @Model.FirstValue</p>
+            <p style="margin-left: 45%;" class="margin">@Model.SecondValue</p>
+            <hr class="margin" />
+            <p style="margin-left: 45%;" class="margin">@Model.Result</p>
+            <p>Ответ: @Model.Result</p>
+            break;
+
+        case '÷':
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-success" role="alert">
+                    <p>@ViewBag.Message</p>
+                </div>
+            }
+            <div class="vl"></div>
+            <p style="right: 51%; position:absolute" class="margin">@(Model.FirstValue*100)</p><d1 style="margin-left: 51%;">@(Model.SecondValue*100)</d1>
+            <hr class="margin" />
+            <p style="left: 51%; position:absolute;"> @Model.Result</p>
+
+            foreach (var item in Model.valueForSolutions)
+            {
+                beginMargin = beginMargin - 1;
+                var momentMargin = beginMargin.ToString() + '%';
+
+                <p style="margin-left: @momentMargin;" class="margin">@item</p>
+
+            }
+            <p>Ответ: @Model.Result</p>
+            break;
+
+        case 'x':
+            <p style="margin-left: 44%;" class="margin">x @Model.FirstValue</p>
+            <hr class="margin" />
+
+            <p style="margin-left: 45%;" class="margin">@Model.SecondValue</p>
+            <hr class="margin" />
+
+            @foreach (var item in Model.valueForSolutions)
+            {
+                beginMargin = beginMargin - 1;
+                var momentMargin = beginMargin.ToString() + '%';
+                if (item != 0)
+                {
+                    <p style="margin-left: @momentMargin" class="margin">@item</p>
+                }
+            }
+            <hr class="margin" /><p style="margin-left: @(beginMargin.ToString() + '%')" class="margin">@Model.Result</p>
+            <p>Ответ: @Model.Result</p>
+            break;
+    }
+}
+
+<style>
+    .margin {
+        margin: 0px;
+    }
+
+    .vl {
+        border-left: groove;
+        height: 45px;
+        position: absolute;
+        right: 50%;
+    }
+
+    .gz {
+        border-left: groove;
+        width: 15px;
+        position: absolute;
+        left: 50%;
+    }
+</style>
