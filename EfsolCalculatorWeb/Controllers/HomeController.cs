@@ -28,16 +28,16 @@ namespace EfsolCalculatorWeb.Controllers
         [HttpPost]
         public IActionResult Index(CalculatorData input)
         {
-            double result = 0;
+            double resultI = 0;
             List<double> valueForSolutions = new List<double> { };
             switch (input.Action)
             {
                 case '+':
-                    result = input.FirstValue + input.SecondValue;
+                    resultI = input.FirstValue + input.SecondValue;
                     break;
 
                 case '-':
-                    result = input.FirstValue - input.SecondValue;
+                    resultI = input.FirstValue - input.SecondValue;
                     break;
 
                 case 'x':
@@ -46,29 +46,70 @@ namespace EfsolCalculatorWeb.Controllers
                     {
                         var inputSecondParse = double.Parse(secondValueChar[i].ToString());
                         var firstMulti = input.FirstValue * inputSecondParse;
-                        result = input.FirstValue * input.SecondValue;
+                        resultI = input.FirstValue * input.SecondValue;
                         valueForSolutions.Add(firstMulti);
                     }
                     input.valueForSolutions = valueForSolutions;
 
-                    result = input.FirstValue * input.SecondValue;
+                    resultI = input.FirstValue * input.SecondValue;
                     break;
 
                 case '÷':
                     double solution = 0;
                     double result2 = 0;
-                    double ss = input.FirstValue;
-                    if(input.FirstValue == (double)input.FirstValue && input.SecondValue == (double)input.SecondValue) 
+                    double remainder = input.FirstValue;
+                    if (input.FirstValue == (int)input.FirstValue && input.SecondValue == (int)input.SecondValue)
                     {
                         ViewBag.Message = $" Для удобства вычислений преобразуем делимое и делитель в целые числа. Для этого умножим делимое {input.FirstValue} и делитель {input.SecondValue} на 100. В результате наша задача сведется к делению следующих чисел:";
                         for (int i = 0; i < 100; i++)
                         {
-                            result = i;
-                            if (input.SecondValue * i > ss)
+                            resultI = i;
+                            if (input.SecondValue * i > remainder)
                             {
-                                result = i - 1;
-                                double findSolution = input.SecondValue * result;
-                                solution = ss - findSolution;
+                                resultI = i - 1;
+                                double findSolution = input.SecondValue * resultI;
+                                solution = remainder - findSolution;
+
+                                if (result2 == 0)
+                                {
+                                    result2 = solution;
+                                }
+                                valueForSolutions.Add(findSolution);
+                                if (solution <= result2)
+                                {
+                                    remainder = solution;
+                                    valueForSolutions.Add(solution);
+                                    i = 0;
+                                }
+                                if (remainder == 0)
+                                {
+                                    valueForSolutions.Add(solution);
+                                    input.valueForSolutions = valueForSolutions;
+                                    break;
+                                }
+                                if (solution > result2)
+                                {
+                                    valueForSolutions.Add(solution);
+                                    input.valueForSolutions = valueForSolutions;
+                                    break;
+                                }
+                                result2 = solution;
+                            }
+                        }
+                    }
+
+                    else
+                    {
+                        ViewBag.Message = $" Для удобства вычислений преобразуем делимое и делитель в целые числа. Для этого умножим делимое {input.FirstValue} и делитель {input.SecondValue} на 100. В результате наша задача сведется к делению следующих чисел:";
+                        for (int i = 0; i < 100; i++)
+                        {
+                            resultI = i;
+                            if (input.SecondValue * i > remainder)
+                            {
+                                resultI = i - 1;
+                                double findSolution = input.SecondValue * resultI;
+                                solution = remainder - findSolution;
+
                                 if (result2 == 0)
                                 {
                                     result2 = solution;
@@ -76,27 +117,32 @@ namespace EfsolCalculatorWeb.Controllers
                                 valueForSolutions.Add(findSolution * 100);
                                 if (solution <= result2)
                                 {
-                                    ss = solution * 100;
+                                    remainder = solution * 100;
                                     valueForSolutions.Add(solution * 1000);
                                     i = 0;
-                                    continue;
+                                }
+                                if (remainder == 0)
+                                {
+                                    valueForSolutions.Add(solution * 100);
+                                    input.valueForSolutions = valueForSolutions;
+                                    break;
                                 }
                                 if (solution > result2)
                                 {
-                                    valueForSolutions.Add(solution*100);
+                                    valueForSolutions.Add(solution * 100);
+                                    input.valueForSolutions = valueForSolutions;
                                     break;
                                 }
                                 result2 = solution;
                             }
                         }
                     }
-                    input.valueForSolutions = valueForSolutions;
-                    result = input.FirstValue / input.SecondValue;
+                    resultI = input.FirstValue / input.SecondValue;
                     break;
                 default:
                     break;
             }
-            input.Result = result;
+            input.Result = resultI;
             return View(input);
         }
 
